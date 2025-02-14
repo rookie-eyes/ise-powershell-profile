@@ -1,6 +1,6 @@
-# 🎨 PowerShell Profile (Pretty PowerShell)
+# 🎨 ISE PowerShell Profile (Pretty ISE PowerShell)
 
-A stylish and functional PowerShell profile that looks and feels almost as good as a Linux terminal.
+A stylish and functional ISE PowerShell profile that looks and feels almost as good as a Linux terminal.
 
 ## ⚡ One Line Install (Elevated PowerShell Recommended)
 
