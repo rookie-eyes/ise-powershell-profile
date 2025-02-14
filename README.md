@@ -7,7 +7,7 @@ A stylish and functional ISE PowerShell profile that looks and feels almost as g
 Execute the following command in an elevated PowerShell window to install the PowerShell profile:
 
 ```
-irm "https://github.com/rookie-eyes/powershell-profile/raw/main/setup.ps1" | iex
+irm "https://github.com/rookie-eyes/ise-powershell-profile/raw/main/setup.ps1" | iex
 ```
 
 ## 🛠️ Fix the Missing Font
