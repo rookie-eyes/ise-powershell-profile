@@ -37,6 +37,36 @@ function Update-Profile {
 }
 Update-Profile
 
+# Define the function to convert CSV to XLSX
+Function Convert-CsvToXlsx {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$CsvFilePath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$XlsxFilePath
+    )
+
+    # Validate CSV file existence
+    if (-not (Test-Path -Path $CsvFilePath)) {
+        Write-Error "CSV file not found: $CsvFilePath"
+        return
+    }
+
+    # Convert CSV to XLSX
+    try {
+        # Import the CSV data
+        $data = Import-Csv -Path $CsvFilePath
+
+        # Export data to XLSX
+        $data | Export-Excel -Path $XlsxFilePath -AutoSize
+
+        Write-Host "Successfully converted $CsvFilePath to $XlsxFilePath" -ForegroundColor Green
+    } catch {
+        Write-Error "Error occurred during conversion: $_"
+    }
+}
+
 #Re-load Profile Function
 
 function reload-profile {
