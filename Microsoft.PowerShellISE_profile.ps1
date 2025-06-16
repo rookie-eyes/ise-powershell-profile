@@ -7,7 +7,9 @@ if ($psISE)
 {
   Start-Steroids
   Clear-Host
-  Write-Host 'ISE Launched' 
+  Write-Host 'Welcome to PowerShell ISE!' -ForegroundColor DarkGreenGreen
+  Write-Host 'ISE Launched at:' -ForegroundColor DarkCyan
+  Write-Host '(Get-Date).ToString("yyyy-MM-dd HH:mm:ss")' -ForegroundColor DarkCyan
   Get-Date
   $env:USERNAME
 }
@@ -16,7 +18,7 @@ $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet
 
 function Update-Profile {
     if (-not $global:canConnectToGitHub) {
-        Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
+        Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor DarkYellow
         return
     }
 
@@ -27,7 +29,7 @@ function Update-Profile {
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShellISE_profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShellISE_profile.ps1" -Destination $PROFILE -Force
-            Write-Host "Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
+            Write-Host "Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor DarkMagenta
         }
     } catch {
         Write-Error "Unable to check for `$profile updates"
@@ -37,7 +39,7 @@ function Update-Profile {
 }
 Update-Profile
 
-#Re-load Profile Function
+#Reload Profile Function
 
 function reload-profile {
     & $profile
