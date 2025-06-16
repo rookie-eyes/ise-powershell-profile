@@ -123,45 +123,30 @@ function admin {
     }
 }
 # This function launches PowerShell ISE with administrative privileges.
-function iseadmin {
-    [CmdletBinding(DefaultParameterSetName='NoCommand')]
-    param (
-        [Parameter(Position=0, ValueFromRemainingArguments=$true, ParameterSetName='Command')]
-        [string[]]$Command
-    )
-
-    # PowerShell ISE (Integrated Scripting Environment) is part of Windows PowerShell,
-    # not PowerShell Core. Its executable is 'powershell_ise.exe'.
-    $iseExecutable = Join-Path $PSHOME "powershell_ise.exe"
-
-    # Verify that the PowerShell ISE executable exists at the expected path.
-    if (-not (Test-Path $iseExecutable)) {
-        Write-Error "Could not locate 'powershell_ise.exe'. Please ensure PowerShell ISE is installed correctly on your system."
-        return
+# If arguments are provided, it runs the command in a new elevated ISE instance.
+# If no arguments are provided, it simply opens a new elevated ISE window.
+function ISEAdmin {
+    if ($args.Count -gt 0) {
+        $argList = "& '" + $args + "'"
+        Start-Process "$psHome\powershell_ise.exe" -Verb runAs -ArgumentList $argList
+    } else {
+        Start-Process "$psHome\powershell_ise.exe" -Verb runAs
     }
+}
 
-    # Initialize an array to hold arguments passed to powershell_ise.exe
-    $argumentList = @()
+# This function starts the ISE Steroids module if it is installed.
+# It checks for the module's path and imports it if found.
+# If the module is not found, it provides a warning message.
+# Usage: Call Start-Steroids to load the ISE Steroids module.
+# This function is designed to be called in the PowerShell ISE profile to ensure that
+# the ISE Steroids module is available whenever the ISE is launched.
 
-    # If the user provides a command, pass it to ISE using its -Command parameter.
-    # This will execute the command directly within the ISE console pane upon launch.
-    if ($PSBoundParameters.ContainsKey('Command')) {
-        $commandToExecute = $Command -join ' '
-        $argumentList += "-Command"
-        # Wrap the command in a script block to ensure it's properly interpreted and executed by ISE.
-        $argumentList += "& { $commandToExecute }"
-    }
-
-    # Attempt to launch PowerShell ISE with administrative privileges using 'Start-Process'.
-    # The -Verb RunAs triggers the User Account Control (UAC) prompt for elevation.
-    try {
-        Write-Host "Attempting to launch PowerShell ISE with administrative privileges..."
-        Start-Process -FilePath $iseExecutable -Verb RunAs -ArgumentList $argumentList
-    }
-    catch {
-        # Catch any errors during the launch process, such as UAC being disabled
-        # or insufficient permissions.
-        Write-Error "Failed to launch administrative PowerShell ISE window. Error: $($_.Exception.Message)"
-        Write-Warning "This usually happens if User Account Control (UAC) is disabled or if you do not have sufficient permissions to run as administrator."
+function Start-Steroids {
+    $steroidsPath = "$env:ProgramFiles\WindowsPowerShell\Modules\ISESteroids\ISESteroids.psd1"
+    if (Test-Path $steroidsPath) {
+        Import-Module $steroidsPath -Force
+        Write-Host "ISE Steroids module loaded successfully." -ForegroundColor Green
+    } else {
+        Write-Warning "ISE Steroids module not found at '$steroidsPath'. Please ensure it is installed."
     }
 }
