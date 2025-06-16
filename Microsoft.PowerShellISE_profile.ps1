@@ -8,7 +8,7 @@ if ($psISE)
   Start-Steroids
   Clear-Host
   Write-Host 'Welcome to PowerShell ISE!'
-  Write-Host 'ISE Launched at:'
+  Write-Host 'ISE Launched on $env:computername'
   Get-Date
   $env:USERNAME
 }
