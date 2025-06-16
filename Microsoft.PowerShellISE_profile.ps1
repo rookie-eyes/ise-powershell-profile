@@ -7,9 +7,8 @@ if ($psISE)
 {
   Start-Steroids
   Clear-Host
-  Write-Host 'Welcome to PowerShell ISE!' -ForegroundColor DarkGreenGreen
-  Write-Host 'ISE Launched at:' -ForegroundColor DarkCyan
-  Write-Host '(Get-Date).ToString("yyyy-MM-dd HH:mm:ss")' -ForegroundColor DarkCyan
+  Write-Host 'Welcome to PowerShell ISE!'
+  Write-Host 'ISE Launched at:'
   Get-Date
   $env:USERNAME
 }
