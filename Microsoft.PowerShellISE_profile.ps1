@@ -72,7 +72,7 @@ function ISE {
         Start-Process "$psHome\powershell_ise.exe" -Verb runAs
     }
 }
-# Simple function to start a new elevated process. If arguments are supplied then 
+# Simple function to start a new elevated powershell process. If arguments are supplied then 
 # a single command is started with admin rights; if not then a new admin instance
 # of PowerShell is started.
 function admin {
@@ -119,6 +119,49 @@ function admin {
     }
     catch {
         Write-Error "Failed to launch administrative PowerShell window. Error: $($_.Exception.Message)"
+        Write-Warning "This usually happens if User Account Control (UAC) is disabled or if you do not have sufficient permissions to run as administrator."
+    }
+}
+# This function launches PowerShell ISE with administrative privileges.
+function iseadmin {
+    [CmdletBinding(DefaultParameterSetName='NoCommand')]
+    param (
+        [Parameter(Position=0, ValueFromRemainingArguments=$true, ParameterSetName='Command')]
+        [string[]]$Command
+    )
+
+    # PowerShell ISE (Integrated Scripting Environment) is part of Windows PowerShell,
+    # not PowerShell Core. Its executable is 'powershell_ise.exe'.
+    $iseExecutable = Join-Path $PSHOME "powershell_ise.exe"
+
+    # Verify that the PowerShell ISE executable exists at the expected path.
+    if (-not (Test-Path $iseExecutable)) {
+        Write-Error "Could not locate 'powershell_ise.exe'. Please ensure PowerShell ISE is installed correctly on your system."
+        return
+    }
+
+    # Initialize an array to hold arguments passed to powershell_ise.exe
+    $argumentList = @()
+
+    # If the user provides a command, pass it to ISE using its -Command parameter.
+    # This will execute the command directly within the ISE console pane upon launch.
+    if ($PSBoundParameters.ContainsKey('Command')) {
+        $commandToExecute = $Command -join ' '
+        $argumentList += "-Command"
+        # Wrap the command in a script block to ensure it's properly interpreted and executed by ISE.
+        $argumentList += "& { $commandToExecute }"
+    }
+
+    # Attempt to launch PowerShell ISE with administrative privileges using 'Start-Process'.
+    # The -Verb RunAs triggers the User Account Control (UAC) prompt for elevation.
+    try {
+        Write-Host "Attempting to launch PowerShell ISE with administrative privileges..."
+        Start-Process -FilePath $iseExecutable -Verb RunAs -ArgumentList $argumentList
+    }
+    catch {
+        # Catch any errors during the launch process, such as UAC being disabled
+        # or insufficient permissions.
+        Write-Error "Failed to launch administrative PowerShell ISE window. Error: $($_.Exception.Message)"
         Write-Warning "This usually happens if User Account Control (UAC) is disabled or if you do not have sufficient permissions to run as administrator."
     }
 }
