@@ -36,6 +36,7 @@ function Update-Profile {
         Remove-Item "$env:temp/Microsoft.PowerShellISE_profile.ps1" -ErrorAction SilentlyContinue
     }
 }
+
 Update-Profile
 
 #Reload Profile Function
